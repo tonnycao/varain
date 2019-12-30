@@ -1,20 +1,13 @@
-import argparse, sys
+import sys
 from fabric.api import *
 from config.config import *
 
-parser = argparse.ArgumentParser(description='deploys duang!!!')
+#comand fab --set env_name=dev make_package:2e87903ef86dfc14358cf35f8e8bc41a95ee4131
 
-# parser.add_argument(dest='pro_name', type=str)
-# parser.add_argument(dest='env_name', type=str)
-# parser.add_argument(dest='parameters', nargs='*')
-
-# args = parser.parse_args()
-# print(args)
 env_name = 'dev'
 pro_name = 'api'
 parameters = []
-
-host_info = REMOTE_HOSTS[env_name]
+host_info = REMOTE_HOSTS[env.env_name]
 env.host = host_info.get('host')
 env.port = host_info.get('port')
 env.user = host_info.get('user')
