@@ -17,9 +17,11 @@ fi
 
 CURTIME=`date +%Y%m%d_%H%M`
 export GIT_SSL_NO_VERIFY=1
-rm -rf ./backend_payment
-git clone -b dev https://192.168.8.61/pi05_bestbox3/backend_payment.git  ./backend_payment
-cd ./backend_payment
+current="$(dirname $(readlink -f $0))"
+echo "work dir is: ${current}"
+rm -rf ${current}/weixin_payment
+git clone -b dev https://192.168.8.61/pi05_bestbox3/backend_payment.git  ${current}/weixin_payment
+cd ${current}/weixin_payment
 
 
 #git checkout  $1
@@ -81,8 +83,8 @@ fi
 find ./ -type d -exec chmod 775 {} \;
 find ./ -type f -exec chmod 644 {} \;
 cd ..
-tar -czf PK06_bestboxDB_backend_payment_${CURTIME}.tar.gz backend_payment
-md5sum PK06_bestboxDB_backend_payment_${CURTIME}.tar.gz > md5_backend_payment_${CURTIME}.txt
+tar -czf ${current}/PK06_bestboxDB_backend_payment_${CURTIME}.tar.gz ${current}/weixin_payment
+md5sum ${current}/PK06_bestboxDB_backend_payment_${CURTIME}.tar.gz > ${current}/md5_backend_payment_${CURTIME}.txt
 
 
 
