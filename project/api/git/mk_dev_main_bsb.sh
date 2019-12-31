@@ -16,9 +16,11 @@ fi
 
 CURTIME=`date +%Y%m%d_%H%M`
 export GIT_SSL_NO_VERIFY=1
+current="$(dirname $(readlink -f $0))"
+echo "work dir is: ${current}"
 rm -rf ./backend_internet
-git clone -b dev https://192.168.8.61/pi05_bestbox3/backend_inernet.git  ./backend_internet
-cd ./backend_internet
+git clone -b dev https://192.168.8.61/pi05_bestbox3/backend_inernet.git  ${current}/backend_internet
+cd ${current}/backend_internet
 
 #git checkout  $1
 ic_Ret=`git checkout  $1 2>&1 | grep 'error' | wc -l`
@@ -33,6 +35,7 @@ fi
 
 
 sleep 1
+echo "tar package please waiting..."
 git log -1 > gitver.txt
 cp -p gitver.txt ./public/
 
@@ -86,6 +89,9 @@ fi
 
 find ./ -type d -exec chmod 775 {} \;
 find ./ -type f -exec chmod 644 {} \;
-cd ..
-tar -czf PK06_bestboxDB_backend_main_${CURTIME}.tar.gz backend_internet
-md5sum PK06_bestboxDB_backend_main_${CURTIME}.tar.gz > md5_backend_main_${CURTIME}.txt
+
+cd ./..
+
+tar -czf ${current}/PK06_bestboxDB_backend_main_${CURTIME}.tar.gz ${current}/backend_internet
+md5sum ${current}/PK06_bestboxDB_backend_main_${CURTIME}.tar.gz > ${current}/md5_backend_main_${CURTIME}.txt
+echo "Success!" 

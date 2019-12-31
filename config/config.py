@@ -8,7 +8,7 @@
 import os
 import sys
 
-base_path = os.path.dirname(os.path.abspath(__file__))
+base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, base_path)
 
 # DATA_PATH获取数据的保存路径
@@ -30,19 +30,19 @@ GIT_URL_MAPS = {
 # host信息
 REMOTE_HOSTS = {
      'dev': {
-          'host': ['192.168.8.62'],
+          'host': '192.168.8.62',
           'port': 22,
           'user': 'web',
           'password': 'web'
      },
      'test': {
-          'host': [''],
+          'host': '',
           'port': 22,
           'user': '',
           'password': ''
      },
      'prod': {
-          'host': [],
+          'host': '',
           'port': 22,
           'user': '',
           'password': ''

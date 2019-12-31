@@ -2,13 +2,13 @@ import sys
 from fabric.api import *
 from config.config import *
 
-#comand fab --set env_name=dev make_package:2e87903ef86dfc14358cf35f8e8bc41a95ee4131
+#fab --set env_name=dev make_package:2e87903ef86dfc14358cf35f8e8bc41a95ee4131
 
 env_name = 'dev'
 pro_name = 'api'
 parameters = []
 host_info = REMOTE_HOSTS[env.env_name]
-env.host = host_info.get('host')
+env.hosts = host_info.get('host')
 env.port = host_info.get('port')
 env.user = host_info.get('user')
 env.password = host_info.get('password')
@@ -16,7 +16,6 @@ exclude_files = EXCLUDE_FILES[pro_name]
 host_info = host_info
 
 git_path = ("%s/project/%s/git" % (sys.path[0], pro_name))
-# version = parameters[1]
 remote_path = REMOTE_PATH[env_name][pro_name]
 local_path = git_path + '/' + PRO_DIR_MAP[pro_name]
 pro_name_dir = PRO_DIR_MAP[pro_name]
@@ -25,7 +24,7 @@ pro_name_dir = PRO_DIR_MAP[pro_name]
 制作归档包tar
 '''
 def make_package(version):
-    cmd = 'sh ' + git_path + 'mk_dev_main_bsb.sh ' + version
+    cmd = 'sh ' + git_path + '/mk_dev_main_bsb.sh ' + version
     local(command=cmd)
 
 
@@ -99,5 +98,6 @@ def rollback():
 '''
 def deploy():
     download()
+    tar()
     upload()
     myrun()
