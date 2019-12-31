@@ -16,88 +16,92 @@ exclude_files = EXCLUDE_FILES[pro_name]
 host_info = host_info
 
 git_path = ("%s/project/%s/git" % (sys.path[0], pro_name))
-remote_path = REMOTE_PATH[env_name][pro_name]
+remote_path = REMOTE_PATH[env.env_name][pro_name]
 local_path = git_path + '/' + PRO_DIR_MAP[pro_name]
 pro_name_dir = PRO_DIR_MAP[pro_name]
 
-'''
-制作归档包tar
-'''
+
 def make_package(version):
+    '''
+    制作归档包tar
+    '''
     cmd = 'sh ' + git_path + '/mk_dev_main_bsb.sh ' + version
     local(command=cmd)
 
 
-'''
-下载排除文件
-'''
 def download():
+    '''
+    下载排除文件
+    '''
     remote_dir = remote_path
     local_dir = local_path
     for file in exclude_files:
         get(remote_path=remote_dir + "/" + file, local_path=local_dir + "/" + file)
 
 
-'''
-打包
-'''
-
-
 def tar():
+    '''
+    打包
+    '''
     target_dir = local_path
     name = pro_name_dir + '.tar'
-    local("tar -cf " + name + " " + target_dir)
+    local("cd "+target_dir+" && tar -cf " + name + " .[!.]* *")
 
 
-'''
-解包
-'''
 def untar( name):
+    '''
+    解包
+    '''
     local("tar -xf " + name)
 
 
-'''
-上传文件
-'''
+def remote_untar():
+    '''
+    远程解压
+    '''
+    file = pro_name_dir + '.tar'
+    run("cd " + remote_path + " && tar -xf " + file)
+    run("cd " + remote_path + " && rm -rf " + file)
+
+
 def upload():
+    '''
+    上传文件
+    '''
     local_paths = local_path + '/' + pro_name_dir + '.tar'
     remote_paths = remote_path
     put(local_path=local_paths, remote_path=remote_paths)
 
 
-'''
-执行远程命令
-'''
-
-
-def myrun():
-    lcd(remote_path)
-    run("tar -xf " + pro_name_dir + '.tar')
-
-
-'''
-备份
-'''
-
-
-def backup(self):
-    pass
-
-
-'''
-回滚
-'''
+def backup():
+    '''
+    备份
+    '''
+    name = pro_name_dir + '_bak.tar'
+    dir_list = remote_path.split('/')
+    del dir_list[len(dir_list)-1]
+    target_dir =  '/'.join(dir_list)
+    run("cd " + remote_path + " && tar -cf " + name + " .[!.]* *")
+    run("cd " + remote_path + " && mv " + name + " " + target_dir)
 
 
 def rollback():
-    pass
+    '''
+   回滚
+   '''
+    name = pro_name_dir + '_bak.tar'
+    dir_list = remote_path.split('/')
+    del dir_list[len(dir_list) - 1]
+    source_dir = '/'.join(dir_list)
+    run("cd " + source_dir + " && mv " + name + " "+remote_path)
+    run("cd "+remote_path + " && tar -xf " + name)
 
 
-'''
-部署
-'''
 def deploy():
+    '''
+    部署
+    '''
     download()
     tar()
     upload()
-    myrun()
+    remote_untar()

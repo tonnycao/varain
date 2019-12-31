@@ -1,96 +1,105 @@
-# -*- coding: utf-8 -*-
-# @Time    : 2019/12/30 11:35
-# @Author  : Tonny Cao
-# @Email   : 647812411@qq.com
-# @File    : api.py
-# @Software: PyCharm
-
 import sys
-import os
 from fabric.api import *
 from config.config import *
 
+env_name = 'dev'
+pro_name = 'api'
+parameters = []
+host_info = REMOTE_HOSTS[env.env_name]
+env.hosts = host_info.get('host')
+env.port = host_info.get('port')
+env.user = host_info.get('user')
+env.password = host_info.get('password')
+exclude_files = EXCLUDE_FILES[pro_name]
+host_info = host_info
 
-class Api(object):
+git_path = ("%s/project/%s/git" % (sys.path[0], pro_name))
+remote_path = REMOTE_PATH[env.env_name][pro_name]
+local_path = git_path + '/' + PRO_DIR_MAP[pro_name]
+pro_name_dir = PRO_DIR_MAP[pro_name]
 
-    def __init__(self, pro_name, env_name, hashcode):
-        host_info = REMOTE_HOSTS[env_name]
-        env.host = host_info.get('host')
-        env.port = host_info.get('port')
-        env.user = host_info.get('user')
-        env.password = host_info.get('password')
-        self.exclude_files = EXCLUDE_FILES[pro_name]
-        self.host_info = host_info
-        self.pro_name = pro_name
-        self.env_name = env_name
-        self.git_path = ("%s/project/%s/git" % (sys.path[0], self.pro_name))
-        self.version = hashcode
-        self.remote_path = REMOTE_PATH[env_name][pro_name]
-        self.local_path = self.git_path + '/' + PRO_DIR_MAP[pro_name]
-        self.pro_name_dir = PRO_DIR_MAP[pro_name]
 
+def make_package(version):
     '''
     制作归档包tar
     '''
-    def make_package(self):
-        cmd = 'sh ' + self.git_path + 'mk_dev_main_bsb.sh ' + self.version
-        local(command=cmd)
+    cmd = 'sh ' + git_path + '/mk_dev_main_bsb.sh ' + version
+    local(command=cmd)
 
+
+def download():
     '''
     下载排除文件
     '''
-    def download(self):
-        exclude_files = self.exclude_files
-        remote_dir = self.remote_path
-        local_dir = self.local_path
-        for file in exclude_files:
-            get(remote_path=remote_dir + "/" + file, local_path=local_dir + "/" + file)
+    remote_dir = remote_path
+    local_dir = local_path
+    for file in exclude_files:
+        get(remote_path=remote_dir + "/" + file, local_path=local_dir + "/" + file)
 
+
+def tar():
     '''
     打包
     '''
-    def tar(self):
-        target_dir = self.local_path
-        name = self.pro_name_dir + '.tar'
-        local("tar -cf " + name + " " + target_dir)
+    target_dir = local_path
+    name = pro_name_dir + '.tar'
+    local("cd "+target_dir+" && tar -cf " + name + " .[!.]* *")
+
+
+def untar( name):
     '''
     解包
     '''
-    def untar(self, name):
-        local("tar -xf " + name)
+    local("tar -xf " + name)
 
+
+def remote_untar():
+    '''
+    远程解压
+    '''
+    file = pro_name_dir + '.tar'
+    run("cd " + remote_path + " && tar -xf " + file)
+    run("cd " + remote_path + " && rm -rf " + file)
+
+
+def upload():
     '''
     上传文件
     '''
-    def upload(self):
-        local_path = self.local_path + '/' + self.pro_name_dir + '.tar'
-        remote_path = self.remote_path
-        put(local_path=local_path, remote_path=remote_path)
+    local_paths = local_path + '/' + pro_name_dir + '.tar'
+    remote_paths = remote_path
+    put(local_path=local_paths, remote_path=remote_paths)
 
-    '''
-    执行远程命令
-    '''
-    def myrun(self):
-        lcd(self.remote_path)
-        run("tar -xf " + self.pro_name_dir + '.tar')
 
+def backup():
     '''
     备份
     '''
-    def backup(self):
-        pass
+    name = pro_name_dir + '_bak.tar'
+    dir_list = remote_path.split('/')
+    del dir_list[len(dir_list)-1]
+    target_dir =  '/'.join(dir_list)
+    run("cd " + remote_path + " && tar -cf " + name + " .[!.]* *")
+    run("cd " + remote_path + " && mv " + name + " " + target_dir)
 
-    '''
-    回滚
-    '''
-    def rollback(self):
-        pass
 
+def rollback():
+    '''
+   回滚
+   '''
+    name = pro_name_dir + '_bak.tar'
+    dir_list = remote_path.split('/')
+    del dir_list[len(dir_list) - 1]
+    source_dir = '/'.join(dir_list)
+    run("cd " + source_dir + " && mv " + name + " "+remote_path)
+    run("cd "+remote_path + " && tar -xf " + name)
+
+
+def deploy():
     '''
     部署
     '''
-    def deploy(self):
-        self.download()
-        self.upload()
-        self.myrun()
-
+    download()
+    tar()
+    upload()
+    remote_untar()
