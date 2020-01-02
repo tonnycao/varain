@@ -10,7 +10,7 @@ from fabric.api import *
 from config.config import *
 
 env_name = 'dev'
-pro_name = 'tv'
+pro_name = 'mobile'
 parameters = []
 host_info = REMOTE_HOSTS[env.env_name]
 env.hosts = host_info.get('host')
@@ -30,7 +30,7 @@ def make_package(version):
     '''
     制作归档包tar
     '''
-    cmd = 'sh ' + git_path + '/mk_dev_tv_bsb.sh ' + version
+    cmd = 'sh ' + git_path + '/mk_dev_mobile_bsb.sh ' + version
     local(command=cmd)
 
 
