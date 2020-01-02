@@ -10,7 +10,7 @@ from fabric.api import *
 from config.config import *
 
 env_name = 'dev'
-pro_name = 'video'
+pro_name = 'ip'
 parameters = []
 host_info = REMOTE_HOSTS[env.env_name]
 env.hosts = host_info.get('host')
@@ -30,7 +30,7 @@ def make_package(version):
     '''
     制作归档包tar
     '''
-    cmd = 'sh ' + git_path + '/mk_dev_video_bsb.sh ' + version
+    cmd = 'sh ' + git_path + '/mk_dev_ip_bsb.sh ' + version
     local(command=cmd)
 
 
@@ -86,10 +86,8 @@ def backup():
     dir_list = remote_path.split('/')
     del dir_list[len(dir_list)-1]
     target_dir = '/'.join(dir_list)
-    run("sh "+target_dir+"/backup.sh")
     run("cd " + remote_path + " && tar -cf " + name + " *")
     run("cd " + remote_path + " && mv " + name + " " + target_dir)
-
 
 
 def rollback():

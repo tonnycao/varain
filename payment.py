@@ -50,7 +50,7 @@ def tar():
     '''
     target_dir = local_path
     name = pro_name_dir + '.tar'
-    local("cd "+target_dir+" && tar -cf " + name + " .[!.]* *")
+    local("cd "+target_dir+" && tar -cf " + name + " *")
 
 
 def untar( name):
@@ -85,8 +85,8 @@ def backup():
     name = pro_name_dir + '_bak.tar'
     dir_list = remote_path.split('/')
     del dir_list[len(dir_list)-1]
-    target_dir =  '/'.join(dir_list)
-    run("cd " + remote_path + " && tar -cf " + name + " .[!.]* *")
+    target_dir = '/'.join(dir_list)
+    run("cd " + remote_path + " && tar -cf " + name + " *")
     run("cd " + remote_path + " && mv " + name + " " + target_dir)
 
 
