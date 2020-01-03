@@ -77,6 +77,11 @@ def upload():
     remote_paths = remote_path
     put(local_path=local_paths, remote_path=remote_paths)
 
+def backup_shell(source_dir, backup_dir):
+    dir_list = remote_path.split('/')
+    del dir_list[len(dir_list) - 1]
+    source_dir = '/'.join(dir_list)
+    run("cd "+source_dir+" && sh rollback.sh "+source_dir+" "+backup_dir)
 
 def backup():
     '''
@@ -90,9 +95,7 @@ def backup():
     run("cd " + remote_path + " && tar -cf " + name + " *")
     run("cd " + remote_path + " && mv " + name + " " + target_dir)
 
-
-
-def rollback():
+def rollback(tar_path, target_dir):
     '''
    回滚
    '''
@@ -102,7 +105,7 @@ def rollback():
     source_dir = '/'.join(dir_list)
     run("cd " + source_dir + " && mv " + name + " "+remote_path)
     run("cd "+remote_path + " && tar -xf " + name)
-
+    run("cd "+source_dir+" && sh rollback.sh "+tar_path+" "+target_dir)
 
 def deploy():
     '''

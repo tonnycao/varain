@@ -99,14 +99,42 @@ def rollback():
     del dir_list[len(dir_list) - 1]
     source_dir = '/'.join(dir_list)
     run("cd " + source_dir + " && mv " + name + " "+remote_path)
-    run("cd "+remote_path + " && tar -xf " + name)
+    run("cd "+ remote_path + " && tar -xf " + name)
+    run("cd " + remote_path + " && rm -rf" + name)
 
 
-def deploy():
+def check_backup():
+    '''
+    检查备份
+    :return:
+    '''
+    name = pro_name_dir + '_bak.tar'
+    dir_list = remote_path.split('/')
+    del dir_list[len(dir_list) - 1]
+    source_dir = '/'.join(dir_list)
+    run("cd " + source_dir + " && find " + name)
+
+
+def check_config():
+    '''
+    检查配置文件
+    :return:
+    '''
+    local_dir = local_path
+    for file in exclude_files:
+        path = local_dir + "/" + file
+        if os.path.exists(path) is False:
+            abort("miss "+file)
+    print('OK')
+
+
+def deploy(first):
     '''
     部署
     '''
-    download()
+    if first == '0':
+        check_backup()
+    check_config()
     tar()
     upload()
     remote_untar()

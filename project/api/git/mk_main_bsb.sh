@@ -24,7 +24,7 @@ then
 	rm -rf ${current}/backend_internet
 fi
 
-git clone -b dev https://192.168.8.61/pi05_bestbox3/backend_inernet.git  ${current}/backend_internet
+git clone -b master https://192.168.8.61/pi05_bestbox3/backend_inernet.git  ${current}/backend_internet
 cd ${current}/backend_internet
 
 #git checkout  $1

@@ -17,9 +17,13 @@ fi
 
 CURTIME=`date +%Y%m%d_%H%M`
 export GIT_SSL_NO_VERIFY=1
-rm -rf ./backend_payment
-git clone -b master https://192.168.8.61/pi05_bestbox3/backend_payment.git  ./backend_payment
-cd ./backend_payment
+if [ -d "${current}/weixin_payment"]
+then
+rm -rf ${current}/weixin_payment
+fi
+
+git clone -b master https://192.168.8.61/pi05_bestbox3/backend_payment.git  ${current}/weixin_payment
+cd ${current}/weixin_payment
 
 
 #git checkout  $1
@@ -35,53 +39,55 @@ fi
 
 
 sleep 1
+echo "tar package please waiting..."
+
 git log -1 > gitver.txt
 cp -p gitver.txt ./public/
 
-if [ -d "storage" ];then
-	rm -rf storage;
+if [ -d "${current}/weixin_payment/storage" ];then
+	rm -rf ${current}/weixin_payment/storage;
 fi
 
-if [ -d ".git" ];then
-rm -rf .git;
+if [ -d "${current}/weixin_payment/.git" ];then
+rm -rf ${current}/weixin_payment/.git;
 fi
 
-if [ -f ".env.example" ];then
-rm -f .env.example;
+if [ -f "${current}/weixin_payment/.env.example" ];then
+rm -f ${current}/weixin_payment/.env.example;
 fi
 
-if [ -f ".gitignore" ];then
-rm -f .gitignore;
+if [ -f "${current}/weixin_payment/.gitignore" ];then
+rm -f ${current}/weixin_payment/.gitignore;
 fi
 
-if [ -f ".gitattributes" ];then
-rm -f .gitattributes;
+if [ -f "${current}/weixin_payment/.gitattributes" ];then
+rm -f ${current}/weixin_payment/.gitattributes;
 fi
 
-if [ -f "up-rewrite.conf" ];then
-rm -f up-rewrite.conf;
+if [ -f "${current}/weixin_payment/up-rewrite.conf" ];then
+rm -f ${current}/weixin_payment/up-rewrite.conf;
 fi
 
-if [ -f "public/.gitignore" ];then
-rm -f public/.gitignore;
+if [ -f "${current}/weixin_payment/public/.gitignore" ];then
+rm -f ${current}/weixin_payment/public/.gitignore;
 fi
 
-if [ -f "public/u.php" ];then
-rm -f public/u.php;
+if [ -f "${current}/weixin_payment/public/u.php" ];then
+rm -f ${current}/weixin_payment/public/u.php;
 fi
 
-if [ -f "public/up-rewrite.conf" ];then
-rm -f public/up-rewrite.conf;
+if [ -f "${current}/weixin_payment/public/up-rewrite.conf" ];then
+rm -f ${current}/weixin_payment/public/up-rewrite.conf;
 fi
 
-if [ -f "public/web.config" ];then
-rm -f public/web.config;
+if [ -f "${current}/weixin_payment/public/web.config" ];then
+rm -f ${current}/weixin_payment/public/web.config;
 fi
 
 find ./ -type d -exec chmod 775 {} \;
 find ./ -type f -exec chmod 644 {} \;
 cd ..
-tar -czf PK06_bestboxDB_backend_payment_${CURTIME}.tar.gz backend_payment
+tar -czf PK06_bestboxDB_backend_payment_${CURTIME}.tar.gz weixin_payment
 md5sum PK06_bestboxDB_backend_payment_${CURTIME}.tar.gz > md5_backend_payment_${CURTIME}.txt
 
 

@@ -1,33 +1,43 @@
 #!/usr/bin/env bash
 
+if [ -z $1 ]
+	then
+	echo 'Usage: backup tar is empty'
+	echo './rollback.sh backup_dir target_dir'		
+	exit 1
+fi
+
+if [ -z $2 ]
+  then
+  echo 'Usage: target dir is empty'
+  echo './rollback.sh backup_dir target_dir'      
+  exit 1
+fi
+
+current="$(dirname $(readlink -f $0))"
+backup_tar="${1}"
+target_dir="${2}"
+
+if [ ! -d "${backup_tar}" ]
+then
+  echo "backup tar is not exist"
+  exit 1
+fi
+
+if [ ! -d "${target_dir}" ]
+then
+  echo "target dir is not exist"
+  exit 1
+fi
+
 echo $(dirname $(readlink -f $0))
 cd $(dirname $(readlink -f $0))
 
-current="$(dirname $(readlink -f $0))";
-root="/var/www/html";
-target=""
 echo "start rollback..."
 
-if [ ! -d "${target}/oldbackend_video" ]; then
-   echo "no backup files"
-   exit 1
-fi
-
-# mkdir ${current}/oldbackend_video
-
-if [ -d "${target}/oldbackend_video" ]; then
-for file in `ls ${target}/oldbackend_video`
-do
-if [ -d "${target}/oldbackend_video/${file}" ]; then
-  if [ "${file}" != "storage" ]; then
-    cp -a ${target}/oldbackend_video/${file} ${root}/backend_video/${file}
-  fi
-else
-  cp -f ${target}/oldbackend_video/${file} ${root}/backend_video/${file}
-fi
-done
-
+mv  ${backup_tar} ${target_dir}
+cd ${target_dir}
+tar -xf backend_video.tar 
 echo "rollback success"
-fi
 
 

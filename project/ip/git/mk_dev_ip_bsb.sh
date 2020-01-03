@@ -16,7 +16,12 @@ CURTIME=`date +%Y%m%d_%H%M`
 export GIT_SSL_NO_VERIFY=1
 current="$(dirname $(readlink -f $0))"
 echo "work dir is: ${current}"
+
+if [ -d "${current}/backend_ip2region"]
+then
 rm -rf ${current}/backend_ip2region
+fi
+
 git clone -b dev https://192.168.8.61/pi05_bestbox3/backend_ip2region.git  ${current}/backend_ip2region
 cd ${current}/backend_ip2region
 
@@ -35,54 +40,54 @@ sleep 1
 git log -1 > gitver.txt
 cp -p gitver.txt ./public/
 
-if [ -d "storage" ]
+if [ -d "${current}/backend_ip2region/storage" ]
 then
-	rm -rf storage
+	rm -rf ${current}/backend_ip2region/storage
 fi
 
-if [ -d ".git" ]
+if [ -d "${current}/backend_ip2region/.git" ]
 then
-    rm -rf .git
+    rm -rf ${current}/backend_ip2region/.git
 fi
 
-if [ -f ".env.example" ]
+if [ -f "${current}/backend_ip2region/.env.example" ]
 then
-    rm -f .env.example
+    rm -f ${current}/backend_ip2region/.env.example
 fi
 
-if [ -f ".gitignore" ]
+if [ -f "${current}/backend_ip2region/.gitignore" ]
 then
-    rm -f .gitignore
+    rm -f ${current}/backend_ip2region/.gitignore
 fi
 
-if [ -f ".gitattributes" ]
+if [ -f "${current}/backend_ip2region/.gitattributes" ]
 then
-    rm -f .gitattributes
+    rm -f ${current}/backend_ip2region/.gitattributes
 fi
 
-if [ -f "up-rewrite.conf" ]
+if [ -f "${current}/backend_ip2region/up-rewrite.conf" ]
 then
-    rm -f up-rewrite.conf
+    rm -f ${current}/backend_ip2region/up-rewrite.conf
 fi
 
-if [ -f "public/.gitignore" ]
+if [ -f "${current}/backend_ip2region/public/.gitignore" ]
 then
-    rm -f public/.gitignore
+    rm -f ${current}/backend_ip2region/public/.gitignore
 fi
 
-if [ -f "public/u.php" ]
+if [ -f "${current}/backend_ip2region/public/u.php" ]
 then
-    rm -f public/u.php
+    rm -f ${current}/backend_ip2region/public/u.php
 fi
 
-if [ -f "public/up-rewrite.conf" ]
+if [ -f "${current}/backend_ip2region/public/up-rewrite.conf" ]
 then
-    rm -f public/up-rewrite.conf
+    rm -f ${current}/backend_ip2region/public/up-rewrite.conf
 fi
 
-if [ -f "public/web.config" ]
+if [ -f "${current}/backend_ip2region/public/web.config" ]
 then
-    rm -f public/web.config
+    rm -f ${current}/backend_ip2region/public/web.config
 fi
 
 cd ./..

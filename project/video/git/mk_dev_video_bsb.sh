@@ -16,7 +16,11 @@ fi
 
 CURTIME=`date +%Y%m%d_%H%M`
 export GIT_SSL_NO_VERIFY=1
+if [ -d "backend_video"]
+then
 rm -rf ./backend_video
+fi
+
 git clone -b dev https://192.168.8.61/pi05_bestbox3/backend_video.git  ./backend_video
 cd ./backend_video
 
